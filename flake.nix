@@ -26,7 +26,7 @@
 
 	# Categories are pkg groups that can be toggled on and off
 	## :help nixCats.flake.outputs.categories & --.outputs.categoryDefinitions.scheme
-	categoryDefinitions = { pkgs, settings, categories, extra, name, mkPlugin } @ packageDef: {
+	categoryDefinitions = { pkgs, settings, categories, extra, name, mkPlugin, ... } @ packageDef: {
 		# RUNTIME dependencies to add (to PATH) for plugins
 		lspsAndRuntimeDeps = {
 			general = with pkgs; [
@@ -77,7 +77,7 @@
 				suffix-LD = true;
 				wrapRc = true;
 				# package-wide unique Alias
-				aliases = [ "vim" ];
+				aliases = [ "vim" "nvim" ];
 			};
 			# Categories to enable
 			## Also additional information to pass to lua (strings, sets...)
