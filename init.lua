@@ -39,3 +39,7 @@ require("lazy").setup({
 	-- Update Checker
 	checker = { enabled = true },
 })
+
+require'nvim-treesitter'.install { 'qmljs' }
+
+vim.lsp.enable('gmlls')
