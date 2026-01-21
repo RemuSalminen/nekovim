@@ -92,7 +92,7 @@
   forEachSystem (system:
   let
   	nixCatsBuilder = utils.baseBuilder luaPath {
-  		inherit nixpkgs dependencyOverlays extra_pkg_config;
+  		inherit nixpkgs system dependencyOverlays extra_pkg_config;
   	} categoryDefinitions packageDefinitions;
   	defaultPackage = nixCatsBuilder defaultPackageName;
   	pkgs = import nixpkgs { inherit system; };
