@@ -2,7 +2,7 @@
   description = "Nvim Config, Cat-style";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
     nixCats.url = "github:BirdeeHub/nixCats-nvim";
   };
@@ -83,6 +83,7 @@
 			## Also additional information to pass to lua (strings, sets...)
 			categories = {
 				general = true;
+				gitPlugins = true;
 			};
 		};
 	};
@@ -109,10 +110,8 @@
   			shellHook = '''';
   		};
   	};
-  })
-
-  # Export NixOS and HomeManager modules
-  (let
+  }) // (let
+  	# Export NixOS and HomeManager modules
   	nixosModule = utils.mkNixosModules {
 		moduleNamespace = [ defaultPackageName ];
 		inherit defaultPackageName dependencyOverlays luaPath
