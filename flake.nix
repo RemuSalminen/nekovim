@@ -35,7 +35,11 @@
 		};
 
 		startupPlugins = {
-			general = with pkgs.vimPlugins; [];
+			general = with pkgs.vimPlugins; [
+				# Lazy Loading
+				lze
+				lzextras
+			];
 			gitPlugins = with pkgs.neovimPlugins; [];
 		};
 
