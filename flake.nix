@@ -30,7 +30,7 @@
 		# RUNTIME dependencies to add (to PATH) for plugins
 		lspsAndRuntimeDeps = {
 			general = with pkgs; [
-				
+				tree-sitter
 			];
 		};
 
@@ -41,7 +41,12 @@
 
 		# Plugins to lazy load (with whatever method used)
 		optionalPlugins = {
-			general = with pkgs.vimPlugins; [];
+			general = with pkgs.vimPlugins; {
+				treesitter = [
+					nvim-treesitter-textobjects
+					nvim-treesitter.withAllGrammars
+				];
+			};
 		};
 
 		# Added to LD_LIBRARY_PATH
