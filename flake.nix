@@ -30,6 +30,7 @@
 		# RUNTIME dependencies to add (to PATH) for plugins
 		lspsAndRuntimeDeps = {
 			general = with pkgs; [
+				ripgrep
 				tree-sitter
 			];
 		};
