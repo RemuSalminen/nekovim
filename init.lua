@@ -119,4 +119,20 @@ require('lze').load {
 	      },
 	    },
     	},
+	{
+		"nixd",
+		lsp = {
+			filetypes = { "nix" },
+			settings = {
+				nixd = {
+					nixpkgs = { expr = nixCats.extra("nixdExtras.nixpkgs"), },
+					options = {
+						nixos = { expr = nixCats.extra("nixdExtras.nixos"), },
+						["home-manager"] = { expr = nixCats.extra("nixdExtras.home-manager"), },
+					},
+					formatting = { command = { "nixfmt" }},
+				},
+			},
+		},
+	},
 }

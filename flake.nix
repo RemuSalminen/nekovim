@@ -32,6 +32,7 @@
 			general = with pkgs; [
 				ripgrep
 				tree-sitter
+				nixd
 				lua-language-server
 			];
 		};
@@ -100,6 +101,12 @@
 			categories = {
 				general = true;
 				gitPlugins = true;
+			};
+			# An Extra table that will also be passed to lua
+			extra = {
+				nixdExtras = {
+					nixpkgs = ''import ${pkgs.path} {}'';
+				};
 			};
 		};
 	};
