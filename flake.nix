@@ -32,6 +32,7 @@
 			general = with pkgs; [
 				ripgrep
 				tree-sitter
+				lua-language-server
 			];
 		};
 
@@ -50,6 +51,11 @@
 				treesitter = [
 					nvim-treesitter-textobjects
 					nvim-treesitter.withAllGrammars
+				];
+				qol = [
+					nvim-lspconfig
+					lazydev-nvim
+					blink-cmp
 				];
 			};
 		};
