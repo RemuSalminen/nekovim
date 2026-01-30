@@ -57,6 +57,7 @@
 					nvim-lspconfig
 					lazydev-nvim
 					blink-cmp
+					mini-hipatterns
 				];
 			};
 		};
