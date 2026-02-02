@@ -158,4 +158,10 @@ require('lze').load {
 			filetypes = { "qml" },
 		},
 	},
+	{
+		"java",
+		lsp = {
+			filetypes = { "java" },
+		},
+	},
 }
