@@ -110,6 +110,12 @@ require('lze').load {
 		end,
 	},
 	{
+		"jdtls",
+		lsp = {
+			filetypes = { "java" },
+		},
+	},
+	{
 	    -- name of the lsp
 	    "lua_ls",
 	    enabled = true,
@@ -156,12 +162,6 @@ require('lze').load {
 		"qmlls",
 		lsp = {
 			filetypes = { "qml" },
-		},
-	},
-	{
-		"java",
-		lsp = {
-			filetypes = { "java" },
 		},
 	},
 }

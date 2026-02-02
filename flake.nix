@@ -34,6 +34,7 @@
 				tree-sitter
 				nixd
 				lua-language-server
+				jdt-language-server
 			];
 		};
 
@@ -58,6 +59,7 @@
 					lazydev-nvim
 					blink-cmp
 					mini-hipatterns
+					nvim-jdtls
 				];
 			};
 		};
