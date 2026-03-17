@@ -68,6 +68,7 @@ inputs: { config, wlib, lib, pkgs, ... }:
           ripgrep
           lazygit
           tree-sitter
+          onefetch
         ];
 
         lazy = true;

@@ -285,6 +285,64 @@ nixInfo.lze.load {
         return version_string
       end
 
+      local function execute(cmd)
+        local f = assert(io.popen(cmd, "r"))
+        local s = assert(f:read("*a"))
+        f:close()
+        return s
+      end
+
+      local function git_string()
+        if vim.fn.executable("onefetch") ~= 1 then
+          return nil
+        end
+
+        local git = execute(
+          [[onefetch -d url --true-color never --no-art --no-color-palette --nerd-fonts 2>/dev/null | \
+          sed 's/\x1B[@A-Z\\\]^_]\|\x1B\[[0-9:;<=>?]*[-!"#$%&'"'"'()*+,.\/]*[][\\@A-Z^_`a-z{|}~]//g' | \
+          awk '
+          BEGIN { bar_length=30; fill="█"; half="▒"; empty="░" }
+          {
+            if ($1=="Languages:") {
+              line = $1
+              # Get Percentage Line
+              if (getline nextline > 0) {
+                valline = nextline
+              }
+
+              percentages_count = 0
+
+              sacrifice_line = valline
+              while (match(sacrifice_line, /([0-9]{1}|[0-9]{2}|[0-9]{3}).[0-9]{1}/)) {
+                percentage = substr(sacrifice_line, RSTART, RLENGTH)
+                percentages_count++
+                percentages[percentages_count] = percentage + 0
+                split(sacrifice_line, a, percentage)
+                sacrifice_line = a[2]
+              }
+
+              for (i=1; i<=percentages_count; i++) {
+                blocks[i] = int((percentages[i]/100)*bar_length + 0.5)
+              }
+
+              for (b=1; b<=blocks[1]; b++) bar = bar fill
+
+              for (b=1; b<=blocks[2]; b++) bar = bar half
+
+              remaining = bar_length - length(bar)
+              for (i=1; i<=remaining; i++) bar = bar empty
+
+              print $1 " " bar
+              print valline
+              next
+            }
+          print
+          }']]
+        )
+        return git
+      end
+
+
       local datetime_section = {
         type = "text",
         val = datetime_string,
@@ -301,12 +359,21 @@ nixInfo.lze.load {
         },
       }
 
+      local git_section = {
+        type = "text",
+        val = git_string,
+        opts = {
+          position = "center",
+        },
+      }
+
       local section = {
         header = dashboard.section.header,
         buttons = dashboard.section.buttons,
         footer = dashboard.section.footer,
         date = datetime_section,
         version = version_section,
+        git = git_section,
       }
 
       local opts = {
@@ -317,8 +384,9 @@ nixInfo.lze.load {
           { type = "padding", val = 2 },
           section.buttons,
           { type = "padding", val = 1 },
-          section.version,
           section.footer,
+          { type = "padding", val = 1 },
+          section.git
         },
       }
 
