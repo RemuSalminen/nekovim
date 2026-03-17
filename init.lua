@@ -1,34 +1,120 @@
--- Settings
+---- Setup ----
+---- The Setup section is licensed under the MIT from nix-wrapper-modules
+--Copyright (c) 2025 the contributors
+
+--Permission is hereby granted, free of charge, to any person obtaining a copy
+--of this software and associated documentation files (the "Software"), to deal
+--in the Software without restriction, including without limitation the rights
+--to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+--copies of the Software, and to permit persons to whom the Software is
+--furnished to do so, subject to the following conditions:
+--
+--The above copyright notice and this permission notice shall be included in all
+--copies or substantial portions of the Software.
+--
+--THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+--IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+--FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+--AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+--LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+--OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+--SOFTWARE.
+
+vim.loader.enable()
+do
+  local ok
+  ok, _G.nixInfo = pcall(require, vim.g.nix_info_plugin_name)
+  if not ok then
+    package.loaded[vim.g.nix_info_plugin_name] = setmetatable({}, {
+      __call = function (_, default) return default end
+    })
+    _G.nixInfo = require(vim.g.nix_info_plugin_name)
+
+    -- TODO: On Non-Nix, vim.pack.add
+  end
+  nixInfo.isNix = vim.g.nix_info_plugin_name ~= nil
+  ---@module 'lzextras'
+  ---@type lzextras | lze
+  nixInfo.lze = setmetatable(require('lze'), getmetatable(require('lzextras')))
+  function nixInfo.get_nix_plugin_path(name)
+    return nixInfo(nil, "plugins", "lazy", name) or nixInfo(nil, "plugins", "start", name)
+  end
+end
+nixInfo.lze.register_handlers {
+  {
+    spec_field = "auto_enable",
+    set_lazy = false,
+    modify = function(plugin)
+      if vim.g.nix_info_plugin_name then
+        local auto_enable = plugin.auto_enable
+        if type(auto_enable) == "table" then
+          for _, name in pairs(plugin.auto_enable) do
+            if not nixInfo.get_nix_plugin_path(name) then
+              plugin.enable = false
+              break
+            end
+          end
+      elseif type(auto_enable) == "string" then
+        if not nixInfo.get_nix_plugin_path(auto_enable) then
+          plugin.enable = false
+        end
+      elseif type(auto_enable) == "boolean" then
+        if not nixInfo.get_nix_plugin_path(plugin.name) then
+          plugin.enable = false
+        end
+      end
+    end
+    return plugin
+  end,
+  },
+  {
+    -- Use Categories from Module
+    -- for_cat = "name" to specify a plugin to be used for a given module
+    spec_field = "for_cat",
+    set_lazy = false,
+    modify = function(plugin)
+      if vim.g.nix_info_plugin_name then
+        if type(plugin.for_cat) == "string" then
+          plugin.enabled = nixInfo(false, "settings", "cats", plugin.for_cat)
+        end
+      end
+      return plugin
+    end,
+  },
+
+  nixInfo.lze.lsp,
+}
+
+-- Automagically setup filetype triggers for lsps if not provided
+nixInfo.lze.h.lsp.set_ft_fallback(function(name)
+  local lspcfg = nixInfo.get_mox_plugin_path "nvim-lspconfig"
+  if lspcfg then
+    local ok, cfg = pcall(dofile, lspcfg .. "/lsp/" .. name .. ".lua")
+    return (ok and cfg or {}).filetypes or {}
+  end
+end)
+
+---- Settings ----
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
 vim.o.number = true
 vim.o.relativenumber = true
 
--- Lazy Loading
+vim.opt.scrolloff = 12
+
+---- Lazy Loading ----
 ---- Extensive Help From the nixCats Github
-require('lze').register_handlers(require('lzextras').lsp)
---local old_ft_fallback = require('lze').h.lsp.get_ft_fallback()
---require('lze').h.lsp.set_ft_fallback(function(name)
---  local lspcfg = nixCats.pawsible({ "allPlugins", "opt", "nvim-lspconfig" }) or nixCats.pawsible({ "allPlugins", "start", "nvim-lspconfig" })
---  if lspcfg then
---    local ok, cfg = pcall(dofile, lspcfg .. "/lsp/" .. name .. ".lua")
---    if not ok then
---      ok, cfg = pcall(dofile, lspcfg .. "/lua/lspconfig/configs/" .. name .. ".lua")
---    end
---    return (ok and cfg or {}).filetypes or {}
---  else
---    return old_ft_fallback(name)
---  end
---end)
-require('lze').load {
+nixInfo.lze.load {
 	{
 		"nvim-treesitter",
 		lazy = false,
+    auto_enable = true,
 	},
 	{
 		"nvim-treesitter-textobjects",
 		lazy = false,
+    auto_enable = true,
 		before = function(plugin)
 			vim.g.no_plugin_maps = true
 		end,
@@ -52,7 +138,7 @@ require('lze').load {
 	},
 	{
 		"nvim-lspconfig",
-		on_require = { "lspconfig" },
+    auto_enable = true,
 		lsp = function(plugin)
 			vim.lsp.config(plugin.name, plugin.lsp or {})
 			vim.lsp.enable(plugin.name)
@@ -75,18 +161,21 @@ require('lze').load {
 	},
 	{
 		"lazydev.nvim",
+    auto_enable = true,
 		cmd = { "LazyDev" },
 		ft = "lua",
 		after = function(_)
 			require('lazydev').setup({
 				library = {
-					{ words = { "nixCats" }, path = (nixCats.nixCatsPath or "") .. '/lua' },
+          { words = { "nixInfo%.lze" }, path = nixInfo("lze", "plugins", "start", "lze") .. '/lua', },
+          { words = { "nixInfo%.lze" }, path = nixInfo("lzextras", "plugins", "start", "lzextras") .. '/lua' },
 				},
 			})
 		end,
 	},
 	{
 		"blink.cmp",
+    auto_enable = true,
 		event = "DeferredUIEnter",
 		after = function(_)
 			require('blink.cmp').setup({
@@ -111,6 +200,7 @@ require('lze').load {
 	},
 	{
 		"jdtls",
+    for_cat = "java",
 		lsp = {
 			filetypes = { "java" },
 		},
@@ -118,7 +208,7 @@ require('lze').load {
 	{
 	    -- name of the lsp
 	    "lua_ls",
-	    enabled = true,
+	    for_cat = "lua",
 	    -- provide a table containing filetypes,
 	    -- and then whatever your functions defined in the function type specs expect.
 	    -- in our case, it just expects the normal lspconfig setup options,
@@ -134,7 +224,7 @@ require('lze').load {
 	          },
 	          signatureHelp = { enabled = true },
 	          diagnostics = {
-	            globals = { "nixCats", "vim", },
+	            globals = { "nixInfo", "vim", },
 	            disable = { 'missing-fields' },
 	          },
 	          telemetry = { enabled = false },
@@ -144,16 +234,17 @@ require('lze').load {
     	},
 	{
 		"nixd",
+    enabled = nixInfo.isNix,
+    for_cat = "nix",
 		lsp = {
 			filetypes = { "nix" },
 			settings = {
 				nixd = {
-					nixpkgs = { expr = nixCats.extra("nixdExtras.nixpkgs"), },
+					nixpkgs = { expr = [[import <nixpkgs> {}]], },
 					options = {
-						nixos = { expr = nixCats.extra("nixdExtras.nixos"), },
-						["home-manager"] = { expr = nixCats.extra("nixdExtras.home-manager"), },
 					},
 					formatting = { command = { "nixfmt" }},
+          diagnostics = { suppress = { "sema-escaping-with" }}
 				},
 			},
 		},

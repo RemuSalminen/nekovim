@@ -4,160 +4,71 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
 
-    nixCats.url = "github:BirdeeHub/nixCats-nvim";
+    wrappers = {
+      url = "github:BirdeeHub/nix-wrapper-modules";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    ## Plugins from outside nixpkgs ##
+    plugins-lze = {
+      url = "github:BirdeeHub/lze";
+      flake = false;
+    };
+    plugins-lzextras = {
+      url = "github:BirdeeHub/lzextras";
+      flake = false;
+    };
   };
 
-  outputs = { self, nixpkgs, nixCats, ... } @ inputs:
+  outputs = { self, nixpkgs, wrappers, ... } @ inputs:
   let
-	inherit (nixCats) utils;
-	# Where Nvim should find the lua dir
-	luaPath = ./.;
- 
-	forEachSystem = utils.eachSystem nixpkgs.lib.platforms.all;
-
-	# Values to pass to the config of nixpkgs
-	extra_pkg_config = {};
-
-	# Import packages from inputs
-	## Defined: plugins-<pluginName> = { ... }
-	## Accessed: pkgs.neovimPlugins
-	# :help nixCats.flake.outputs.overlays
-	dependencyOverlays = [ (utils.standardPluginOverlay inputs) ];
-
-	# Categories are pkg groups that can be toggled on and off
-	## :help nixCats.flake.outputs.categories & --.outputs.categoryDefinitions.scheme
-	categoryDefinitions = { pkgs, settings, categories, extra, name, mkPlugin, ... } @ packageDef: {
-		# RUNTIME dependencies to add (to PATH) for plugins
-		lspsAndRuntimeDeps = {
-			general = with pkgs; [
-				ripgrep
-				tree-sitter
-				nixd
-				lua-language-server
-				jdt-language-server
-			];
-		};
-
-		startupPlugins = {
-			general = with pkgs.vimPlugins; [
-				# Lazy Loading
-				lze
-				lzextras
-			];
-			gitPlugins = with pkgs.neovimPlugins; [];
-		};
-
-		# Plugins to lazy load (with whatever method used)
-		optionalPlugins = {
-			general = with pkgs.vimPlugins; {
-				treesitter = [
-					nvim-treesitter-textobjects
-					nvim-treesitter.withAllGrammars
-				];
-				qol = [
-					nvim-lspconfig
-					lazydev-nvim
-					blink-cmp
-					mini-hipatterns
-					nvim-jdtls
-				];
-			};
-		};
-
-		# Added to LD_LIBRARY_PATH
-		## No idea what that means in practice rn
-		sharedLibraries = {
-			general = with pkgs; [];
-		};
-
-		# RUNTIME envVars for Plugins and Nvim instances
-		environmentVariables = {};
-
-		# nixpkgs option
-		extraWrapperArgs = {};
-
-		# Extra Functions to pass to python.withPackages or lua.withPackages
-		## Enabled by setting hosts.python3.enable
-		## Accessible in lua config via vim.g.python3_host_prog
-		python3.libraries = {};
-		## Added to $LUA_PATH & $LUA_CPATH
-		extraLuaPackages = {};
-	};
-
-	# Define the Package itself
-	# Queriable from lua
-	# :help nixCats.flake.outputs.packageDefinitions
-	defaultPackageName = "nekovim";
-	packageDefinitions = {
-		# Can Define Multiple "Versions"
-		nekovim = { pkgs, name, ... }: {
-			# :help nixCats.flake.outputs.settings
-			settings = {
-				suffix-path = true;
-				suffix-LD = true;
-				wrapRc = true;
-				# package-wide unique Alias
-				aliases = [ "vim" "nvim" ];
-			};
-			# Categories to enable
-			## Also additional information to pass to lua (strings, sets...)
-			categories = {
-				general = true;
-				gitPlugins = true;
-			};
-			# An Extra table that will also be passed to lua
-			extra = {
-				nixdExtras = {
-					nixpkgs = ''import ${pkgs.path} {}'';
-				};
-			};
-		};
-	};
-  in
-  # :help nixCats.flake.outputs.exports
-  forEachSystem (system:
-  let
-  	nixCatsBuilder = utils.baseBuilder luaPath {
-  		inherit nixpkgs system dependencyOverlays extra_pkg_config;
-  	} categoryDefinitions packageDefinitions;
-  	defaultPackage = nixCatsBuilder defaultPackageName;
-  	pkgs = import nixpkgs { inherit system; };
+    forEachSystem = nixpkgs.lib.genAttrs nixpkgs.lib.platforms.all;
+    module = nixpkgs.lib.modules.importApply ./module.nix inputs;
+    wrapper = wrappers.lib.evalModule module;
   in
   {
-  	# Make the packageDefinitions into actual packages. Set the default
-  	packages = utils.mkAllWithDefault defaultPackage;
-  
-  	# Choose devShell package
-  	devShells = {
-  		default = pkgs.mkShell {
-  			name = defaultPackageName;
-  			packages = [ defaultPackage ];
-  			inputsFrom = [];
-  			shellHook = '''';
-  		};
-  	};
-  }) // (let
-  	# Export NixOS and HomeManager modules
-  	nixosModule = utils.mkNixosModules {
-		moduleNamespace = [ defaultPackageName ];
-		inherit defaultPackageName dependencyOverlays luaPath
-			categoryDefinitions packageDefinitions extra_pkg_config nixpkgs;
-	};
-	homeModule = utils.mkHomeModules {
-		moduleNamespace = [ defaultPackageName ];
-		inherit defaultPackageName dependencyOverlays luaPath
-			categoryDefinitions packageDefinitions extra_pkg_config nixpkgs;
-	};
-  in
-  {
-	overlays = utils.makeOverlays luaPath {
-		inherit nixpkgs dependencyOverlays extra_pkg_config;
-	} categoryDefinitions packageDefinitions defaultPackageName;
+    # Overlay pkgs neovim with the wrapped neovim
+    overlays = {
+      neovim = final: prev: { neovim = wrapper.config.wrap { pkgs = final; }; };
+      default = self.overlays.neovim;
+    };
+    wrapperModules = {
+      neovim = module;
+      default = self.wrapperModules.neovim;
+    };
+    wrappers = {
+      neovim = wrapper.config;
+      default = self.wrappers.neovim;
+    };
+    # Make the Wraps into actual packages
+    packages = forEachSystem (system:
+      let
+        pkgs = import nixpkgs { inherit system; };
+      in
+      {
+        neovim = wrapper.config.wrap { inherit pkgs; };
+        default = self.packages.${system}.neovim;
+      }
+    );
 
-	nixosModules.default = nixosModule;
-	homeModules.default = homeModule;
-
-	inherit utils nixosModule homeModule;
-	inherit (utils) templates;
-  });
+    # Export NixOS and HomeManager modules
+    nixosModules = {
+      default = self.nixosModules.neovim;
+      neovim = wrappers.lib.mkInstallModule {
+        name = "neovim";
+        value = module;
+      };
+    };
+    homeModules = {
+      default = self.homeModules.neovim;
+      neovim = wrappers.lib.mkInstallModule {
+        name = "neovim";
+        value = module;
+        loc = [
+          "home"
+          "packages"
+        ];
+      };
+    };
+  };
 }
