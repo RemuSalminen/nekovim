@@ -317,6 +317,20 @@ nixInfo.lze.load {
     end,
   },
   {
+    "telescope-fzf-native.nvim",
+    auto_enable = true,
+    after = function(_)
+      require('telescope').load_extension "fzf"
+    end
+  },
+  {
+    "telescope-frecency.nvim",
+    auto_enable = true,
+    after = function(_)
+      require('telescope').load_extension "frecency"
+    end
+  },
+  {
     "jdtls",
     for_cat = "java",
     lsp = {

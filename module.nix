@@ -78,6 +78,9 @@ inputs: { config, wlib, lib, pkgs, ... }:
           nvim-treesitter-textobjects
           nvim-treesitter.withAllGrammars
 
+          telescope-fzf-native-nvim
+          telescope-frecency-nvim
+
           nvim-lspconfig
           blink-cmp
           blink-compat
