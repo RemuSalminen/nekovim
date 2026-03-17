@@ -96,12 +96,39 @@ end)
 
 ---- Settings ----
 vim.g.mapleader = " "
-vim.g.maplocalleader = "\\"
+vim.g.maplocalleader = "§"
 
 vim.o.number = true
 vim.o.relativenumber = true
+vim.wo.signcolumn = 'yes'
+vim.wo.relativenumber = true
+-- keep wrapped lines indented
+vim.o.breakindent = true
+-- save undo history
+vim.o.undofile = true
+-- ignore case when searching in lowercase
+vim.o.ignorecase = true
+vim.o.smartcase = true
+-- crash/hang remedies
+vim.o.updatetime = 250
+vim.o.timeoutlen = 300
+
+vim.o.completeopt = 'menu,preview,noselect'
 
 vim.opt.scrolloff = 12
+-- For When I come to a decision
+-- vim.o.smarttab = true
+-- vim.opt.cpoptions:append('I')
+-- vim.o.expandtab = true
+-- vim.o.smartindent = true
+-- vim.o.autoindent = true
+-- vim.o.tabstop = 4
+-- vim.o.softtabstop = 4
+-- vim.o.shiftwidth = 4
+
+vim.opt.cursorline = true
+vim.opt.cursorlineopt = "number"
+vim.opt.cindent = true
 
 ---- Lazy Loading ----
 ---- Extensive Help From the nixCats Github
