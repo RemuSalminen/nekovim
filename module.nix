@@ -80,6 +80,7 @@ inputs: { config, wlib, lib, pkgs, ... }:
           blink-cmp
           blink-compat
           mini-hipatterns
+          autoclose-nvim
         ];
       };
       nix = {

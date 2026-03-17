@@ -225,6 +225,14 @@ nixInfo.lze.load {
 		})
 		end,
 	},
+  {
+    "autoclose.nvim",
+    auto_enable = true,
+    after = function(_)
+      require('autoclose').setup()
+    end
+
+  },
 	{
 		"jdtls",
     for_cat = "java",
