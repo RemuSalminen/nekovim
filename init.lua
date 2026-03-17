@@ -265,6 +265,15 @@ nixInfo.lze.load {
         [[------------------------------------------------␍]],
       }
 
+      dashboard.section.buttons.val = {
+        dashboard.button("e", "  New file", ":ene <BAR> startinsert <CR>"),
+        dashboard.button("f", "󰈞  Find Files", ":Telescope find_files <CR>"),
+        dashboard.button("o", "󰋚  Recent Files", ":Telescope oldfiles <CR>"),
+        dashboard.button("t", "󱎸  Find text", ":Telescope live_grep <CR>"),
+        dashboard.button("q", "󰒲  Go Nap", ":qa <CR>"),
+      }
+
+
       local function datetime_string()
         local datetime = os.date(" %d-%m-%Y %H:%M:%S")
         return datetime
