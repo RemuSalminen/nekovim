@@ -133,98 +133,98 @@ vim.opt.cindent = true
 ---- Lazy Loading ----
 ---- Extensive Help From the nixCats Github
 nixInfo.lze.load {
-	{
-		"nvim-treesitter",
-		lazy = false,
+  {
+    "nvim-treesitter",
+    lazy = false,
     auto_enable = true,
-	},
-	{
-		"nvim-treesitter-textobjects",
-		lazy = false,
-    auto_enable = true,
-		before = function(plugin)
-			vim.g.no_plugin_maps = true
-		end,
-	},
-	{
-		"mini.hipatterns",
-		after = function(_)
-			require('mini.hipatterns').setup({
-				highlighters = {
-					-- Highlight standalone 'FIXME', 'HACK', 'TODO', 'NOTE'
-					fixme = { pattern = '%f[%w]()FIXME()%f[%W]', group = 'MiniHipatternsFixme' },
-					hack  = { pattern = '%f[%w]()HACK()%f[%W]',  group = 'MiniHipatternsHack'  },
-					todo  = { pattern = '%f[%w]()TODO()%f[%W]',  group = 'MiniHipatternsTodo'  },
-					note  = { pattern = '%f[%w]()NOTE()%f[%W]',  group = 'MiniHipatternsNote'  },
-
-					-- Highlight hex color strings (`#rrggbb`) using that color
-					hex_color = require('mini.hipatterns').gen_highlighter.hex_color(),
   },
-			})
-		end,
-	},
-	{
-		"nvim-lspconfig",
+  {
+    "nvim-treesitter-textobjects",
+    lazy = false,
     auto_enable = true,
-		lsp = function(plugin)
-			vim.lsp.config(plugin.name, plugin.lsp or {})
-			vim.lsp.enable(plugin.name)
-		end,
---		before = function(plugin)
---			vim.lsp.config('*', {
---				-- capabilities = capabilities,
---				on_attach = function(client, bufnr)
---				  -- Your on_attach function should set buffer-local lsp related settings
---					local nmap = function(keys, func, desc)
---					if desc then desc = 'LSP: ' .. desc end
---					vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
---					end
---					nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
---				  	nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
---					-- etc...
---			end,
---     		})
---		end,
-	},
-	{
-		"lazydev.nvim",
+    before = function(plugin)
+      vim.g.no_plugin_maps = true
+    end,
+  },
+  {
+    "mini.hipatterns",
+    after = function(_)
+      require('mini.hipatterns').setup({
+        highlighters = {
+          -- Highlight standalone 'FIXME', 'HACK', 'TODO', 'NOTE'
+          fixme = { pattern = '%f[%w]()FIXME()%f[%W]', group = 'MiniHipatternsFixme' },
+          hack  = { pattern = '%f[%w]()HACK()%f[%W]',  group = 'MiniHipatternsHack'  },
+          todo  = { pattern = '%f[%w]()TODO()%f[%W]',  group = 'MiniHipatternsTodo'  },
+          note  = { pattern = '%f[%w]()NOTE()%f[%W]',  group = 'MiniHipatternsNote'  },
+
+          -- Highlight hex color strings (`#rrggbb`) using that color
+          hex_color = require('mini.hipatterns').gen_highlighter.hex_color(),
+        },
+      })
+    end,
+  },
+  {
+    "nvim-lspconfig",
     auto_enable = true,
-		cmd = { "LazyDev" },
-		ft = "lua",
-		after = function(_)
-			require('lazydev').setup({
-				library = {
+    lsp = function(plugin)
+      vim.lsp.config(plugin.name, plugin.lsp or {})
+      vim.lsp.enable(plugin.name)
+    end,
+--    before = function(plugin)
+--      vim.lsp.config('*', {
+--        -- capabilities = capabilities,
+--        on_attach = function(client, bufnr)
+--          -- Your on_attach function should set buffer-local lsp related settings
+--          local nmap = function(keys, func, desc)
+--          if desc then desc = 'LSP: ' .. desc end
+--          vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
+--          end
+--          nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+--            nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+--          -- etc...
+--      end,
+--        })
+--    end,
+  },
+  {
+    "lazydev.nvim",
+    auto_enable = true,
+    cmd = { "LazyDev" },
+    ft = "lua",
+    after = function(_)
+      require('lazydev').setup({
+        library = {
           { words = { "nixInfo%.lze" }, path = nixInfo("lze", "plugins", "start", "lze") .. '/lua', },
           { words = { "nixInfo%.lze" }, path = nixInfo("lzextras", "plugins", "start", "lzextras") .. '/lua' },
-				},
-			})
-		end,
-	},
-	{
-		"blink.cmp",
+        },
+      })
+    end,
+  },
+  {
+    "blink.cmp",
     auto_enable = true,
-		event = "DeferredUIEnter",
-		after = function(_)
-			require('blink.cmp').setup({
-			keymap = { preset = 'default' },
-			appearance = {},
-			completion = {
-				documentation = { auto_show = true },
-			},
-			fuzzy = {},
-			sources = {
-				default = { "lsp", "path", "snippets", "buffer", "omni" },
-				--providers = {
-				--	lazydev = {
-				--		name = "LazyDev",
-				--		module = "lazydev.integrations.blink",
-				--		score_offset = 100,
-				--	},
-				--},
-			},
-		})
-		end,
-	},
+    event = "DeferredUIEnter",
+    after = function(_)
+      require('blink.cmp').setup({
+      keymap = { preset = 'default' },
+      appearance = {},
+      completion = {
+        documentation = { auto_show = true },
+      },
+      fuzzy = {},
+      sources = {
+        default = { "lsp", "path", "snippets", "buffer", "omni" },
+        --providers = {
+        --  lazydev = {
+        --    name = "LazyDev",
+        --    module = "lazydev.integrations.blink",
+        --    score_offset = 100,
+        --  },
+        --},
+      },
+    })
+    end,
+  },
   {
     "autoclose.nvim",
     auto_enable = true,
@@ -233,61 +233,61 @@ nixInfo.lze.load {
     end
 
   },
-	{
-		"jdtls",
+  {
+    "jdtls",
     for_cat = "java",
-		lsp = {
-			filetypes = { "java" },
-		},
-	},
-	{
-	    -- name of the lsp
-	    "lua_ls",
-	    for_cat = "lua",
-	    -- provide a table containing filetypes,
-	    -- and then whatever your functions defined in the function type specs expect.
-	    -- in our case, it just expects the normal lspconfig setup options,
-	    -- but with a default on_attach and capabilities
-	    lsp = {
-	      -- if you provide the filetypes it doesn't ask lspconfig for the filetypes
-	      filetypes = { 'lua' },
-	      settings = {
-	        Lua = {
-	          runtime = { version = 'LuaJIT' },
-	          formatters = {
-	            ignoreComments = true,
-	          },
-	          signatureHelp = { enabled = true },
-	          diagnostics = {
-	            globals = { "nixInfo", "vim", },
-	            disable = { 'missing-fields' },
-	          },
-	          telemetry = { enabled = false },
-	        },
-	      },
-	    },
-    	},
-	{
-		"nixd",
+    lsp = {
+      filetypes = { "java" },
+    },
+  },
+  {
+    -- name of the lsp
+    "lua_ls",
+    for_cat = "lua",
+    -- provide a table containing filetypes,
+    -- and then whatever your functions defined in the function type specs expect.
+    -- in our case, it just expects the normal lspconfig setup options,
+    -- but with a default on_attach and capabilities
+    lsp = {
+      -- if you provide the filetypes it doesn't ask lspconfig for the filetypes
+      filetypes = { 'lua' },
+      settings = {
+        Lua = {
+          runtime = { version = 'LuaJIT' },
+          formatters = {
+            ignoreComments = true,
+          },
+          signatureHelp = { enabled = true },
+          diagnostics = {
+            globals = { "nixInfo", "vim", },
+            disable = { 'missing-fields' },
+          },
+          telemetry = { enabled = false },
+        },
+      },
+    },
+  },
+  {
+    "nixd",
     enabled = nixInfo.isNix,
     for_cat = "nix",
-		lsp = {
-			filetypes = { "nix" },
-			settings = {
-				nixd = {
-					nixpkgs = { expr = [[import <nixpkgs> {}]], },
-					options = {
-					},
-					formatting = { command = { "nixfmt" }},
+    lsp = {
+      filetypes = { "nix" },
+      settings = {
+        nixd = {
+          nixpkgs = { expr = [[import <nixpkgs> {}]], },
+          options = {
+          },
+          formatting = { command = { "nixfmt" }},
           diagnostics = { suppress = { "sema-escaping-with" }}
-				},
-			},
-		},
-	},
-	{
-		"qmlls",
-		lsp = {
-			filetypes = { "qml" },
-		},
-	},
+        },
+      },
+    },
+  },
+  {
+    "qmlls",
+    lsp = {
+      filetypes = { "qml" },
+    },
+  },
 }
