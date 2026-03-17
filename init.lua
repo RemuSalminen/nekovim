@@ -303,6 +303,11 @@ nixInfo.lze.load {
           awk '
           BEGIN { bar_length=30; fill="█"; half="▒"; empty="░" }
           {
+            if ($1=="Language:") {
+              for (b=1; b<=bar_length; b++) bar = bar fill
+              print $1 " " bar
+              next
+            }
             if ($1=="Languages:") {
               line = $1
               # Get Percentage Line
