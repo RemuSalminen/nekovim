@@ -236,9 +236,85 @@ nixInfo.lze.load {
   {
     "alpha-nvim",
     auto_enable = true,
+    lazy = false,
     after = function(_)
-      require('alpha').setup(require('alpha.themes.dashboard').config)
-    end
+      local dashboard = require('alpha.themes.dashboard')
+
+      dashboard.section.header.val =
+      {
+        [[          *                  *␍␍                 ]],
+        [[              __                *␍␍              ]],
+        [[           ,db'    *     *␍␍                     ]],
+        [[          ,d8/       *        *    *␍␍           ]],
+        [[          888␍␍                                  ]],
+        [[          `db\       *     *␍␍                   ]],
+        [[            `o`_                    **␍␍         ]],
+        [[       *               *   *    _      *␍␍       ]],
+        [[             *                 / )␍␍             ]],
+        [[          *    (\__/) *       ( (  *␍␍           ]],
+        [[        ,-.,-.,)    (.,-.,-.,-.) ).,-.,-.␍␍      ]],
+        [[       | @|  ={      }= | @|  / / | @|o |␍␍      ]],
+        [[      _j__j__j_)     `-------/ /__j__j__j_␍␍     ]],
+        [[      ________(               /___________␍␍     ]],
+        [[       |  | @| \              || o|O | @|␍␍      ]],
+        [[       |o |  |,'\       ,   ,'"|  |  |  |  hjw␍␍ ]],
+        [[      vV\|/vV|`-'\  ,---\   | \Vv\hjwVv\//v␍␍    ]],
+        [[                 _) )    `. \ /␍␍                ]],
+        [[                (__/       ) )␍␍                 ]],
+        [[                          (_/␍                   ]],
+        [[------------------------------------------------␍]],
+      }
+
+      local function datetime_string()
+        local datetime = os.date(" %d-%m-%Y %H:%M:%S")
+        return datetime
+      end
+
+      local function version_string()
+        local version = vim.version()
+        local version_string = "v" .. version.major .. "." .. version.minor .. "." .. version.patch
+        return version_string
+      end
+
+      local datetime_section = {
+        type = "text",
+        val = datetime_string,
+        opts = {
+          position = "center",
+        },
+      }
+
+      local version_section = {
+        type = "text",
+        val = version_string,
+        opts = {
+          position = "center",
+        },
+      }
+
+      local section = {
+        header = dashboard.section.header,
+        buttons = dashboard.section.buttons,
+        footer = dashboard.section.footer,
+        date = datetime_section,
+        version = version_section,
+      }
+
+      local opts = {
+        layout = {
+          { type = "padding", val = 1 },
+          section.header,
+          section.date,
+          { type = "padding", val = 2 },
+          section.buttons,
+          { type = "padding", val = 1 },
+          section.version,
+          section.footer,
+        },
+      }
+
+      require('alpha').setup(opts)
+    end,
   },
   {
     "jdtls",
