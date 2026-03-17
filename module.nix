@@ -73,6 +73,8 @@ inputs: { config, wlib, lib, pkgs, ... }:
         lazy = true;
 
         data = with pkgs.vimPlugins; [
+          alpha-nvim
+
           nvim-treesitter-textobjects
           nvim-treesitter.withAllGrammars
 

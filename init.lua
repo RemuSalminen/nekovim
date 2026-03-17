@@ -234,6 +234,13 @@ nixInfo.lze.load {
 
   },
   {
+    "alpha-nvim",
+    auto_enable = true,
+    after = function(_)
+      require('alpha').setup(require('alpha.themes.dashboard').config)
+    end
+  },
+  {
     "jdtls",
     for_cat = "java",
     lsp = {
