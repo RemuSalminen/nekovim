@@ -304,7 +304,7 @@ nixInfo.lze.load {
           BEGIN { bar_length=30; fill="█"; half="▒"; empty="░" }
           {
             if ($1=="Language:") {
-              for (b=1; b<=bar_length; b++) bar = bar fill
+              for (b=1; b<=23; b++) bar = bar fill
               print $1 " " bar
               next
             }
