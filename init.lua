@@ -81,18 +81,7 @@ nixInfo.lze.register_handlers {
       return plugin
     end,
   },
-
-  nixInfo.lze.lsp,
 }
-
--- Automagically setup filetype triggers for lsps if not provided
-nixInfo.lze.h.lsp.set_ft_fallback(function(name)
-  local lspcfg = nixInfo.get_mox_plugin_path "nvim-lspconfig"
-  if lspcfg then
-    local ok, cfg = pcall(dofile, lspcfg .. "/lsp/" .. name .. ".lua")
-    return (ok and cfg or {}).filetypes or {}
-  end
-end)
 
 ---- Settings ----
 vim.g.mapleader = " "
@@ -132,6 +121,8 @@ vim.opt.cindent = true
 
 ---- Lazy Loading ----
 ---- Extensive Help From the nixCats Github
+require "lsp"
+
 nixInfo.lze.load {
   {
     "nvim-treesitter",
@@ -159,43 +150,6 @@ nixInfo.lze.load {
 
           -- Highlight hex color strings (`#rrggbb`) using that color
           hex_color = require('mini.hipatterns').gen_highlighter.hex_color(),
-        },
-      })
-    end,
-  },
-  {
-    "nvim-lspconfig",
-    auto_enable = true,
-    lsp = function(plugin)
-      vim.lsp.config(plugin.name, plugin.lsp or {})
-      vim.lsp.enable(plugin.name)
-    end,
---    before = function(plugin)
---      vim.lsp.config('*', {
---        -- capabilities = capabilities,
---        on_attach = function(client, bufnr)
---          -- Your on_attach function should set buffer-local lsp related settings
---          local nmap = function(keys, func, desc)
---          if desc then desc = 'LSP: ' .. desc end
---          vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
---          end
---          nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
---            nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
---          -- etc...
---      end,
---        })
---    end,
-  },
-  {
-    "lazydev.nvim",
-    auto_enable = true,
-    cmd = { "LazyDev" },
-    ft = "lua",
-    after = function(_)
-      require('lazydev').setup({
-        library = {
-          { words = { "nixInfo%.lze" }, path = nixInfo("lze", "plugins", "start", "lze") .. '/lua', },
-          { words = { "nixInfo%.lze" }, path = nixInfo("lzextras", "plugins", "start", "lzextras") .. '/lua' },
         },
       })
     end,
@@ -420,62 +374,5 @@ nixInfo.lze.load {
     after = function(_)
       require('telescope').load_extension "frecency"
     end
-  },
-  {
-    "jdtls",
-    for_cat = "java",
-    lsp = {
-      filetypes = { "java" },
-    },
-  },
-  {
-    -- name of the lsp
-    "lua_ls",
-    for_cat = "lua",
-    -- provide a table containing filetypes,
-    -- and then whatever your functions defined in the function type specs expect.
-    -- in our case, it just expects the normal lspconfig setup options,
-    -- but with a default on_attach and capabilities
-    lsp = {
-      -- if you provide the filetypes it doesn't ask lspconfig for the filetypes
-      filetypes = { 'lua' },
-      settings = {
-        Lua = {
-          runtime = { version = 'LuaJIT' },
-          formatters = {
-            ignoreComments = true,
-          },
-          signatureHelp = { enabled = true },
-          diagnostics = {
-            globals = { "nixInfo", "vim", },
-            disable = { 'missing-fields' },
-          },
-          telemetry = { enabled = false },
-        },
-      },
-    },
-  },
-  {
-    "nixd",
-    enabled = nixInfo.isNix,
-    for_cat = "nix",
-    lsp = {
-      filetypes = { "nix" },
-      settings = {
-        nixd = {
-          nixpkgs = { expr = [[import <nixpkgs> {}]], },
-          options = {
-          },
-          formatting = { command = { "nixfmt" }},
-          diagnostics = { suppress = { "sema-escaping-with" }}
-        },
-      },
-    },
-  },
-  {
-    "qmlls",
-    lsp = {
-      filetypes = { "qml" },
-    },
   },
 }
