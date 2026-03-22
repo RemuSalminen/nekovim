@@ -139,31 +139,6 @@ nixInfo.lze.load {
     end,
   },
   {
-    "blink.cmp",
-    auto_enable = true,
-    event = "DeferredUIEnter",
-    after = function(_)
-      require('blink.cmp').setup({
-      keymap = { preset = 'default' },
-      appearance = {},
-      completion = {
-        documentation = { auto_show = true },
-      },
-      fuzzy = {},
-      sources = {
-        default = { "lsp", "path", "snippets", "buffer", "omni" },
-        --providers = {
-        --  lazydev = {
-        --    name = "LazyDev",
-        --    module = "lazydev.integrations.blink",
-        --    score_offset = 100,
-        --  },
-        --},
-      },
-    })
-    end,
-  },
-  {
     "autoclose.nvim",
     auto_enable = true,
     after = function(_)
