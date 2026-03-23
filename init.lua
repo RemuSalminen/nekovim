@@ -145,21 +145,20 @@ nixInfo.lze.load {
     auto_enable = true,
     after = function(_)
       require('autoclose').setup()
-    end
-
+    end,
   },
   {
     "telescope-fzf-native.nvim",
     auto_enable = true,
     after = function(_)
       require('telescope').load_extension "fzf"
-    end
+    end,
   },
   {
     "telescope-frecency.nvim",
     auto_enable = true,
     after = function(_)
       require('telescope').load_extension "frecency"
-    end
+    end,
   },
 }
