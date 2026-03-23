@@ -81,6 +81,7 @@ inputs: { config, wlib, lib, pkgs, ... }:
 
           telescope-fzf-native-nvim
           telescope-frecency-nvim
+          neo-tree-nvim
 
           nvim-lspconfig
           blink-cmp
