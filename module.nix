@@ -88,6 +88,7 @@ inputs: { config, wlib, lib, pkgs, ... }:
           blink-compat
           mini-hipatterns
           autoclose-nvim
+          neoscroll-nvim
         ];
       };
       nix = {
