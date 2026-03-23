@@ -86,7 +86,6 @@ nixInfo.lze.register_handlers {
 ---- Settings ----
 vim.g.mapleader = " "
 vim.g.maplocalleader = "§"
-vim.keymap.set("n", " ", "<Nop>", { desc = "Ignore space", silent = true })
 
 vim.o.number = true
 vim.o.relativenumber = true

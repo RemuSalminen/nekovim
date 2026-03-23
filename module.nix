@@ -89,6 +89,7 @@ inputs: { config, wlib, lib, pkgs, ... }:
           mini-hipatterns
           autoclose-nvim
           neoscroll-nvim
+          which-key-nvim
         ];
       };
       nix = {
