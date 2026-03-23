@@ -122,6 +122,7 @@ vim.opt.cindent = true
 
 ---- Lazy Loading ----
 ---- Extensive Help From the nixCats Github
+require "keymap"
 require "ui"
 require "lsp"
 
