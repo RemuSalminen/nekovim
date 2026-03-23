@@ -1,7 +1,7 @@
 return {
   {
     "alpha-nvim",
-    auto_enable = true,
+    auto_enable = false,
     lazy = false,
     after = function(_)
       local dashboard = require('alpha.themes.dashboard')
