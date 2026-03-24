@@ -18,6 +18,11 @@
       url = "github:BirdeeHub/lzextras";
       flake = false;
     };
+
+    plugins-neopywal = {
+      url = "github:RedsXDD/neopywal.nvim";
+      flake = false;
+    };
   };
 
   outputs = { self, nixpkgs, wrappers, ... } @ inputs:

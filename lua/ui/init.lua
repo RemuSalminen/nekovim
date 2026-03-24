@@ -1,4 +1,5 @@
 nixInfo.lze.load {
+  { import = "ui.colorscheme" },
   { import = "ui.dashboard" },
   { import = "ui.highlighter" },
   { import = "ui.neotree" },

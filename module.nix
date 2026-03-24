@@ -43,6 +43,11 @@ inputs: { config, wlib, lib, pkgs, ... }:
       type = lib.types.attrsOf lib.types.bool;
       default = builtins.mapAttrs (_: v: v.enable) config.specs;
     };
+
+    colorscheme = lib.mkOption {
+      type = lib.types.str;
+      default = "neopywal";
+    };
   };
 
   config.binName = "nekovim";
@@ -91,6 +96,27 @@ inputs: { config, wlib, lib, pkgs, ... }:
           neoscroll-nvim
           which-key-nvim
         ];
+      };
+      colorscheme = {
+        lazy = true;
+        data = builtins.getAttr config.settings.colorscheme (
+          {
+            # Base16 colorscheme that auto refreshes.
+            "neopywal" = config.nvim-lib.neovimPlugins.neopywal;
+            "neopywal-dark" = config.nvim-lib.neovimPlugins.neopywal;
+            "neopywal-light" = config.nvim-lib.neovimPlugins.neopywal;
+          }
+
+          //
+
+          (with pkgs.vimPlugins;
+          {
+            "onedark" = onedarkpro-nvim;
+            "onelight" = onedarkpro-nvim;
+            "onedark_dark" = onedarkpro-nvim;
+            "onedark_vivid" = onedarkpro-nvim;
+          })
+        );
       };
       nix = {
         after = [ "general" ];
