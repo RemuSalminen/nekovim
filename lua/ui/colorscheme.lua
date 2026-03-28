@@ -5,9 +5,10 @@ return {
     load = function (_name)
       vim.schedule(function ()
         vim.cmd.colorscheme(nixInfo("onedark_dark", "settings", "colorscheme"))
-        vim.schedule(function ()
-          vim.cmd([[hi LineNr guifg=#bb9af7]])
-        end)
+        ---- To tweak settings related to the colorscheme simultaneously
+        --vim.schedule(function ()
+        --  vim.cmd([[hi LineNr guifg=#bb9af7]])
+        --end)
       end)
     end
   },
