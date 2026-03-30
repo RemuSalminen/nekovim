@@ -148,6 +148,16 @@ inputs: { config, wlib, lib, pkgs, ... }:
           nvim-jdtls
         ];
       };
+      lean = {
+        after = [ "general" ];
+        lazy = true;
+        extraPackages = with pkgs; [
+          lean4
+        ];
+        data = with pkgs.vimPlugins; [
+          lean-nvim
+        ];
+      };
     };
     # To be able to modify specs from outside the Module.
     ## "parent" refers to the Original values.
