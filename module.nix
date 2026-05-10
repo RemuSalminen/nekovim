@@ -152,7 +152,6 @@ inputs: { config, wlib, lib, pkgs, ... }:
         after = [ "general" ];
         lazy = true;
         extraPackages = with pkgs; [
-          lean4
         ];
         data = with pkgs.vimPlugins; [
           lean-nvim
