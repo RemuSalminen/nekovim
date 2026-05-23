@@ -11,4 +11,16 @@ return {
       },
     },
   },
+  {
+    "ruff",
+    for_cat = "python",
+    lsp = {
+      filetypes = { 'python' },
+      settings = {
+        ruff = {
+
+        },
+      },
+    }
+  }
 }
