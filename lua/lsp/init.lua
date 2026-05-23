@@ -65,4 +65,5 @@ nixInfo.lze.load {
   { import = "lsp.java" },
   { import = "lsp.qml" },
   { import = "lsp.lean" },
+  { import = "lsp.python" },
 }

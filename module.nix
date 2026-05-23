@@ -157,6 +157,15 @@ inputs: { config, wlib, lib, pkgs, ... }:
           lean-nvim
         ];
       };
+      python = {
+        after = [ "general" ];
+        lazy = true;
+        extraPackages = with pkgs; [
+          ty
+          ruff
+        ];
+        data = null;
+      };
     };
     # To be able to modify specs from outside the Module.
     ## "parent" refers to the Original values.
