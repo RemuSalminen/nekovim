@@ -1,4 +1,4 @@
-inputs: { config, wlib, lib, pkgs, ... }:
+inputs: { config, wlib, lib, pkgs, options, ... }:
 
 {
   imports = [ wlib.wrapperModules.neovim ];
@@ -56,7 +56,7 @@ inputs: { config, wlib, lib, pkgs, ... }:
 
   config = {
     # Get pkgs from each spec
-    extraPackages = config.specCollect (acc: v: acc ++ (v.extraPackages or [ ])) [ ];
+    runtimePkgs = config.specCollect (acc: v: acc ++ (v.runtimePkgs or [ ])) [ ];
     ## Specs are nixCats categories?
     specs = {
       lze = [
@@ -69,7 +69,7 @@ inputs: { config, wlib, lib, pkgs, ... }:
       general = {
         after = [ "lze" ];
         ## Pkgs not directly related to nvim; Stuff to package with it.
-        extraPackages = with pkgs; [
+        runtimePkgs = with pkgs; [
           ripgrep
           lazygit
           tree-sitter
@@ -121,7 +121,7 @@ inputs: { config, wlib, lib, pkgs, ... }:
       nix = {
         after = [ "general" ];
         lazy = true;
-        extraPackages = with pkgs; [
+        runtimePkgs = with pkgs; [
           nixd
           nixfmt
         ];
@@ -130,7 +130,7 @@ inputs: { config, wlib, lib, pkgs, ... }:
       lua = {
         after = [ "general" ];
         lazy = true;
-        extraPackages = with pkgs; [
+        runtimePkgs = with pkgs; [
           lua-language-server
           stylua
         ];
@@ -141,7 +141,7 @@ inputs: { config, wlib, lib, pkgs, ... }:
       java = {
         after = [ "general" ];
         lazy = true;
-        extraPackages = with pkgs; [
+        runtimePkgs = with pkgs; [
           jdt-language-server
         ];
         data = with pkgs.vimPlugins; [
@@ -151,7 +151,7 @@ inputs: { config, wlib, lib, pkgs, ... }:
       lean = {
         after = [ "general" ];
         lazy = true;
-        extraPackages = with pkgs; [
+        runtimePkgs = with pkgs; [
         ];
         data = with pkgs.vimPlugins; [
           lean-nvim
@@ -160,7 +160,7 @@ inputs: { config, wlib, lib, pkgs, ... }:
       python = {
         after = [ "general" ];
         lazy = true;
-        extraPackages = with pkgs; [
+        runtimePkgs = with pkgs; [
           ty
           ruff
         ];
@@ -170,10 +170,12 @@ inputs: { config, wlib, lib, pkgs, ... }:
     # To be able to modify specs from outside the Module.
     ## "parent" refers to the Original values.
     specMods = { parentSpec ? null, parentOpts ? null, parentName ? null, config, ... }: {
-      options.extraPackages = lib.mkOption {
-        type = lib.types.listOf wlib.types.stringable;
-        default = [ ];
-        description = "an extraPackages spec field to put packages to suffix to the PATH";
+      # add a runtimePkgs field to the specs themselves
+      options.runtimePkgs = options.runtimePkgs // {
+        description = ''
+          A runtimePkgs spec field to put packages on the PATH
+          If the spec is disabled, this value will not be included in the resulting neovim derivation
+        '';
       };
     };
     #settings = {};
