@@ -118,6 +118,16 @@ inputs: { config, wlib, lib, pkgs, options, ... }:
           })
         );
       };
+      markdown = {
+        after = [ "general" ];
+        lazy = true;
+        runtimePkgs = with pkgs; [
+          python3Packages.pylatexenc
+        ];
+        data = with pkgs.vimPlugins; [
+          render-markdown-nvim
+        ];
+      };
       nix = {
         after = [ "general" ];
         lazy = true;
