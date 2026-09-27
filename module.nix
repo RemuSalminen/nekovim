@@ -123,9 +123,12 @@ inputs: { config, wlib, lib, pkgs, options, ... }:
         lazy = true;
         runtimePkgs = with pkgs; [
           python3Packages.pylatexenc
+          imagemagick
+          luajitPackages.magick
         ];
         data = with pkgs.vimPlugins; [
           render-markdown-nvim
+          image-nvim
         ];
       };
       nix = {
