@@ -32,11 +32,6 @@
     wrapper = wrappers.lib.evalModule module;
   in
   {
-    # Overlay pkgs neovim with the wrapped neovim
-    overlays = {
-      neovim = final: prev: { neovim = wrapper.config.wrap { pkgs = final; }; };
-      default = self.overlays.neovim;
-    };
     wrapperModules = {
       neovim = module;
       default = self.wrapperModules.neovim;
@@ -45,13 +40,18 @@
       neovim = wrapper.config;
       default = self.wrappers.neovim;
     };
+    # Overlay pkgs neovim with the wrapped neovim
+    overlays = {
+      neovim = final: prev: { neovim = self.wrappers.neovim.wrap { pkgs = final; }; };
+      default = self.overlays.neovim;
+    };
     # Make the Wraps into actual packages
     packages = forEachSystem (system:
       let
         pkgs = import nixpkgs { inherit system; };
       in
       {
-        neovim = wrapper.config.wrap { inherit pkgs; };
+        neovim = self.wrappers.neovim.wrap { inherit pkgs; };
         default = self.packages.${system}.neovim;
       }
     );
@@ -59,21 +59,14 @@
     # Export NixOS and HomeManager modules
     nixosModules = {
       default = self.nixosModules.neovim;
-      neovim = wrappers.lib.mkInstallModule {
+      neovim = wrappers.lib.getInstallModule {
         name = "neovim";
         value = module;
       };
     };
     homeModules = {
       default = self.homeModules.neovim;
-      neovim = wrappers.lib.mkInstallModule {
-        name = "neovim";
-        value = module;
-        loc = [
-          "home"
-          "packages"
-        ];
-      };
+      neovim = self.nixosModules.neovim;
     };
   };
 }
