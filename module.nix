@@ -118,6 +118,16 @@ inputs: { config, wlib, lib, pkgs, options, ... }:
           })
         );
       };
+      ansible = {
+        after = [ "general" ];
+        lazy = true;
+        runtimePkgs = with pkgs; [
+          ansible-language-server
+        ];
+        data = with pkgs.vimPlugins; [
+          ansible-vim
+        ];
+      };
       markdown = {
         after = [ "general" ];
         lazy = true;

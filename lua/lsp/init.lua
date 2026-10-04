@@ -67,4 +67,5 @@ nixInfo.lze.load {
   { import = "lsp.lean" },
   { import = "lsp.python" },
   { import = "lsp.markdown" },
+  { import = "lsp.ansible" },
 }
