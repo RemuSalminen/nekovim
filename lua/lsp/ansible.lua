@@ -7,4 +7,11 @@ return {
       require("ansible").setup({})
     end,
   },
+  {
+    "ansiblels",
+    for_cat = "ansible",
+    lsp = {
+      filetypes = { "ansible", "yaml.ansible" },
+    },
+  },
 }

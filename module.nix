@@ -123,6 +123,7 @@ inputs: { config, wlib, lib, pkgs, options, ... }:
         lazy = true;
         runtimePkgs = with pkgs; [
           ansible-language-server
+          ansible-lint
         ];
         data = with pkgs.vimPlugins; [
           ansible-vim
