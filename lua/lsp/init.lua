@@ -4,7 +4,7 @@ nixInfo.lze.register_handlers {
 
 -- Automagically setup filetype triggers for lsps if not provided
 nixInfo.lze.h.lsp.set_ft_fallback(function(name)
-  local lspcfg = nixInfo.get_mox_plugin_path "nvim-lspconfig"
+  local lspcfg = nixInfo.get_nix_plugin_path "nvim-lspconfig"
   if lspcfg then
     local ok, cfg = pcall(dofile, lspcfg .. "/lsp/" .. name .. ".lua")
     return (ok and cfg or {}).filetypes or {}
